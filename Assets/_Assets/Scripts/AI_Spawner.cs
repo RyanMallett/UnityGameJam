@@ -37,7 +37,7 @@ public class AI_Spawner : MonoBehaviour {
 
         ai.GetComponentInChildren<Animator>().runtimeAnimatorController = GetComponent<Animator>().runtimeAnimatorController;
 
-        ai.transform.position = this.transform.position;
+        ai.transform.position = new Vector3(this.transform.position.x, 0, this.transform.position.z);
 
         counter = Random.Range(min, max);
     }

@@ -110,6 +110,8 @@ public class AI_Script : MonoBehaviour {
         {
             if (state == STATE.GoingToRestaurant)
             {
+                // Sit in any available seats, otherwise walk out
+
                 state = STATE.Ordering;
                 counter = timeToWaitForFood;
             } 
@@ -156,6 +158,9 @@ public class AI_Script : MonoBehaviour {
     {
         if (counter <= 0)
         {
+            // Display Happy or Sad
+            // Also where diarrhoea check would go
+
             SeekFromCounter();
             state = STATE.LeavingRestaurant;
         }
