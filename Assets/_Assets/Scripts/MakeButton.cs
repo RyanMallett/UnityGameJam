@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MakeButton : MonoBehaviour {
+    public int recipe;
     public int fingersCost;
     public int toesCost;
     public int eyeballsCost;
@@ -19,6 +20,6 @@ public class MakeButton : MonoBehaviour {
     }
 
     public void onClick() {
-        dude.GetComponent<CyborgController>().MakeFood(recipeCost);
+        dude.GetComponent<CyborgController>().MakeFood(recipeCost, recipe);
     }
 }

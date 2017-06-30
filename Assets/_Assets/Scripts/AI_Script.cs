@@ -137,6 +137,7 @@ public class AI_Script : MonoBehaviour {
                 WaitForFood();
                 break;
             case STATE.LeavingRestaurant:
+                order = MENU.None;
                 TraversePath();
                 break;
             case STATE.Kidnapped:
@@ -184,7 +185,7 @@ public class AI_Script : MonoBehaviour {
             {
                 seats.GetComponent<Counter_Script>().seats[i].occupied = true;
 
-                int rand = Random.Range(0, 5);
+                int rand = Random.Range(1, 6);
                 order = (MENU)rand;
 
                 seats.GetComponent<Counter_Script>().seats[i].order = order;

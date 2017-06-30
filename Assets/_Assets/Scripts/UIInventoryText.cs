@@ -8,14 +8,14 @@ public class UIInventoryText : MonoBehaviour {
 
     int value;
     Text text;
-    CyborgController cyController;
+    public CyborgController cyController;
 
     Button a;
     
 	// Use this for initialization
 	void Start () {
         text = GetComponent<Text>();
-        cyController = GameObject.FindGameObjectWithTag("Player").GetComponent<CyborgController>();
+        cyController = GameObject.Find("Cyborg").GetComponent<CyborgController>();
        // a.
 	}
 	

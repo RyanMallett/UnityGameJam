@@ -41,6 +41,6 @@ public class PersonController : MonoBehaviour {
                 Debug.LogWarning("No Current Sprite with that name exists");
                 break;
         }
-        GetComponent<SpriteRenderer>().sprite = newSprite;
+        GetComponentInChildren<SpriteRenderer>().sprite = newSprite;
     }
 }
