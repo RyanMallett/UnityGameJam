@@ -3,14 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum MENU
-{
-    Chips,
-    HotDog,
-    Taco,
-    Burger,
-    Pizza,
-}
 
 public enum STATE
 {
@@ -24,8 +16,11 @@ public enum STATE
 
 public class AI_Script : MonoBehaviour {
 
+    public GameObject seats;
     public float timeToWaitForFood;
     public float timeToEat;
+
+    private int seatId;
 
     public float pointBuffer;
     public Transform[] toCounter;
@@ -48,7 +43,10 @@ public class AI_Script : MonoBehaviour {
         agent = GetComponent<NavMeshAgent>();
         activePath = new Queue<Vector2>();
         state = STATE.GoingToRestaurant;
+
         SeekToCounter();
+
+        seatId = -1;
 	}
 	
 	// Update is called once per frame
@@ -114,9 +112,18 @@ public class AI_Script : MonoBehaviour {
 
                 state = STATE.Ordering;
                 counter = timeToWaitForFood;
-            } 
-            
-        }                     
+            }
+
+        }
+
+        if (activePath.Count == 0 && agent.destination.x == fromCounter[fromCounter.Length - 1].position.x && agent.destination.z == fromCounter[fromCounter.Length - 1].position.z)
+        {
+            if (state == STATE.LeavingRestaurant)
+            {
+                Destroy(this.gameObject);
+            }
+
+        }
     }
 
     void StateMachine()
@@ -162,20 +169,60 @@ public class AI_Script : MonoBehaviour {
             // Also where diarrhoea check would go
 
             SeekFromCounter();
+            agent.enabled = true;
             state = STATE.LeavingRestaurant;
+
+            seats.GetComponent<Counter_Script>().seats[seatId].occupied = false;
         }
     }
 
     public void OrderFood()
     {
-        int rand = Random.Range(0, 5);
 
-        order = (MENU)rand;
+        for (int i = 0; i < seats.GetComponent<Counter_Script>().seats.Length; i++)
+        {
+            if (!seats.GetComponent<Counter_Script>().seats[i].occupied && seatId == -1)
+            {
+                seats.GetComponent<Counter_Script>().seats[i].occupied = true;
+
+                int rand = Random.Range(0, 5);
+                order = (MENU)rand;
+
+                seats.GetComponent<Counter_Script>().seats[i].order = order;
+                seats.GetComponent<Counter_Script>().seats[i].timeLeft = timeToWaitForFood;
+
+                seatId = i;
+
+                agent.enabled = false;
+
+                transform.position = new Vector3(seats.GetComponent<Counter_Script>().seats[i].obj.transform.position.x, transform.position.y, seats.GetComponent<Counter_Script>().seats[i].obj.transform.position.z);
+                transform.LookAt(new Vector3(transform.position.x, transform.position.y, -1));
+
+                return;
+            }
+        }
+
+        if (seatId == -1 )
+        {
+            SeekFromCounter();
+            agent.enabled = true;
+            state = STATE.LeavingRestaurant;
+        }
+
+        
     }
 
-    public void GetKidnapped()
+    public void Kidnapped()
     {
-
+        agent.enabled = false;
+        GetComponentInChildren<Animator>().enabled = false;
     }
 
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.tag == "AI_Killer" && state == STATE.LeavingRestaurant)
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }

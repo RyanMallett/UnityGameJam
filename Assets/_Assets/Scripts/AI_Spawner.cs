@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AI_Spawner : MonoBehaviour {
 
@@ -9,7 +10,9 @@ public class AI_Spawner : MonoBehaviour {
 
     public GameObject prefab;
 
-    public GameObject anim;
+    public GameObject seats;
+
+    //public GameObject anim;
 
     public float min;
     public float max;
@@ -18,26 +21,34 @@ public class AI_Spawner : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        SpawnPrefab();
+        //SpawnPrefab();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         counter -= Time.deltaTime;
 
-        //if (counter <= 0) SpawnPrefab();
+        if (counter <= 0) SpawnPrefab();
 	}
 
     void SpawnPrefab()
     {
         GameObject ai = Instantiate(prefab);
 
+        NavMeshHit closestHit;
+
+        if (NavMesh.SamplePosition(transform.position, out closestHit, 500, 1))
+        {
+            ai.transform.position = closestHit.position;
+            ai.AddComponent<NavMeshAgent>();
+        }
+
         ai.GetComponent<AI_Script>().toCounter = toCounter;
         ai.GetComponent<AI_Script>().fromCounter = fromCounter;
 
-        ai.GetComponentInChildren<Animator>().runtimeAnimatorController = GetComponent<Animator>().runtimeAnimatorController;
+        ai.GetComponent<AI_Script>().seats = seats;
 
-        ai.transform.position = new Vector3(this.transform.position.x, 0, this.transform.position.z);
+        ai.GetComponentInChildren<Animator>().runtimeAnimatorController = GetComponent<Animator>().runtimeAnimatorController;
 
         counter = Random.Range(min, max);
     }
