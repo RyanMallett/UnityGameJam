@@ -8,7 +8,6 @@ public enum STATE
 {
     GoingToRestaurant,
     Ordering,
-    Eating,
     LeavingRestaurant,
     Kidnapped,
     Dead,
@@ -137,9 +136,6 @@ public class AI_Script : MonoBehaviour {
                 OrderFood();
                 WaitForFood();
                 break;
-            case STATE.Eating:
-                WaitToEat();
-                break;
             case STATE.LeavingRestaurant:
                 TraversePath();
                 break;
@@ -156,8 +152,11 @@ public class AI_Script : MonoBehaviour {
     {
         if (counter <= 0)
         {
-            state = STATE.Eating;
-            counter = timeToEat;
+            SeekFromCounter();
+            agent.enabled = true;
+            state = STATE.LeavingRestaurant;
+
+            seats.GetComponent<Counter_Script>().seats[seatId].occupied = false;
         }
     }
 
@@ -190,6 +189,7 @@ public class AI_Script : MonoBehaviour {
 
                 seats.GetComponent<Counter_Script>().seats[i].order = order;
                 seats.GetComponent<Counter_Script>().seats[i].timeLeft = timeToWaitForFood;
+                seats.GetComponent<Counter_Script>().seats[i].customer = this.GetComponent<AI_Script>();
 
                 seatId = i;
 
@@ -216,6 +216,19 @@ public class AI_Script : MonoBehaviour {
     {
         agent.enabled = false;
         GetComponentInChildren<Animator>().enabled = false;
+    }
+
+    public void GotFood()
+    {
+        if (state == STATE.Ordering)
+        {
+            SeekFromCounter();
+            agent.enabled = true;
+            state = STATE.LeavingRestaurant;
+
+            seats.GetComponent<Counter_Script>().seats[seatId].occupied = false;
+        }
+ 
     }
 
     void OnTriggerEnter(Collider col)

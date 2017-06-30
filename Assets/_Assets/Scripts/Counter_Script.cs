@@ -25,6 +25,8 @@ public struct Seat
         obj.GetComponent<SpriteRenderer>().sprite = sprite;
         obj.name = "Stool" + id.ToString();
         occupied = false;
+
+        customer = null;
     }
 
     public int id;
@@ -33,6 +35,8 @@ public struct Seat
     public float timeLeft;
     public GameObject obj;
     public Sprite sprite;
+
+    public AI_Script customer;
 }
 
 public class Counter_Script : MonoBehaviour {
@@ -62,4 +66,12 @@ public class Counter_Script : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void GotFood(int seatNum)
+    {
+        if (seats[seatNum].occupied)
+        {
+            seats[seatNum].customer.GotFood();
+        }       
+    }
 }
